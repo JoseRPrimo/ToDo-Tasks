@@ -8,6 +8,7 @@ import br.com.joserprimo.ToDoList.Model.TaskModel;
 import br.com.joserprimo.ToDoList.Service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,11 +27,11 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskResponseDTO listarId(@PathVariable Long id){
-        return taskService.listarId(id);
+        return taskService.findById(id);
     }
 
     @PostMapping
-    public TaskResponseDTO criar(@Valid @RequestBody TaskCreateRequestDTO dto){
+    public TaskResponseDTO criar(@RequestBody TaskCreateRequestDTO dto){
         return taskService.criar(dto);
     }
 

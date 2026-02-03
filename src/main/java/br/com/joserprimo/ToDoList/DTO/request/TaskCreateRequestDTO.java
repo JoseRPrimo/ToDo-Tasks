@@ -19,6 +19,4 @@ public class TaskCreateRequestDTO {
     private String titulo;
     private String descricao;
     private TaskStatus taskStatus;
-    private LocalDate data_criacao;
-
 }

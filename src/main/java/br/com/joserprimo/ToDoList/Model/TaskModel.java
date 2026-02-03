@@ -26,6 +26,10 @@ public class TaskModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus taskStatus = TaskStatus.PENDENTE;
-    @Column(name = "data_criacao")
-    private LocalDate data_criacao = LocalDate.now();
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDate dataCriacao;
+    @PrePersist
+    protected void onCreate() {
+        this.dataCriacao = LocalDate.now();
+    }
 }
