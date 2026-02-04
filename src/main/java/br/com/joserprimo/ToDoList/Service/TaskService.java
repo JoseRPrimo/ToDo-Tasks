@@ -11,13 +11,16 @@ import br.com.joserprimo.ToDoList.Exception.ValidationException;
 import br.com.joserprimo.ToDoList.Model.TaskModel;
 import br.com.joserprimo.ToDoList.Model.TaskStatus;
 import br.com.joserprimo.ToDoList.Repository.TaskRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class TaskService {
     @Autowired
@@ -25,11 +28,12 @@ public class TaskService {
     @Autowired
     TaskMapper mapper;
 
-
+    @Transactional(readOnly = true)
     public List<TaskResponseDTO> listar(){
        return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public TaskResponseDTO listarId(Long id){
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() ->  new ResourceNotFoundException("Task não encontrada com id: " + id));
@@ -37,18 +41,10 @@ public class TaskService {
     }
 
     public TaskResponseDTO criar(TaskCreateRequestDTO dto){
-        if (dto.getTitulo()==null || dto.getTitulo().trim().isEmpty()){
-            throw new ValidationException("Titulo obrigatorio");
-        }
-        String validacaoTitulo = dto.getTitulo().trim().replace(" ","");
-        if (validacaoTitulo.length()<3 || validacaoTitulo.length()>100){
-            throw new ValidationException("Titulo precisa ter entre 3 e 100 caracteres.");
-        }
-        String titulolimpo=dto.getTitulo().trim();
-        if(taskRepository.existsByTituloIgnoreCaseAndTaskStatus(titulolimpo, TaskStatus.PENDENTE)){
+        String titulo = dto.getTitulo();
+        if(taskRepository.existsByTituloIgnoreCaseAndTaskStatus(titulo, TaskStatus.PENDENTE)){
             throw new BusinessRuleException("Já existe task pendente com esse titulo.");
         }
-
         TaskModel task = taskRepository.save(mapper.toEntity(dto));
 
         return mapper.toResponse(task);
@@ -66,26 +62,23 @@ public class TaskService {
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: "+id));
         mapper.patchEntity(task, dto);
-        TaskModel atualizado = taskRepository.save(task);
-        return mapper.toResponse(atualizado);
+        return mapper.toResponse(task);
     }
 
     public TaskResponseDTO atualizar(Long id, TaskUpdateRequestDTO dto) {
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: " + id));
         mapper.updateEntity(task, dto);
-        TaskModel atualizado = taskRepository.save(task);
-        return mapper.toResponse(atualizado);
+        return mapper.toResponse(task);
     }
-
     public TaskResponseDTO concluir(Long id){
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: "+id));
-        if(task.getTaskStatus()==TaskStatus.PENDENTE){
-            task.setTaskStatus(TaskStatus.CONCLUIDA);
-            task.setDataConclusao(LocalDate.now());
-            taskRepository.save(task);
+        if(task.getTaskStatus()!=TaskStatus.PENDENTE) {
+            throw new BusinessRuleException("Você só pode concluir uma task pendente!");
         }
+        task.setTaskStatus(TaskStatus.CONCLUIDA);
+        task.setDataConclusao(LocalDate.now());
         return mapper.toResponse(task);
     }
 

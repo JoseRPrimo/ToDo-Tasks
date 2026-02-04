@@ -18,5 +18,15 @@ public class TaskCreateRequestDTO {
     @Size(min = 3, max = 100, message = "Titulo precisa ter entre 3 e 100 caracteres.")
     private String titulo;
     private String descricao;
-    private TaskStatus taskStatus;
+
+    public void setTitulo(String titulo) {
+        if (titulo == null) {
+            this.titulo = null;
+            return;
+        }
+
+        this.titulo = titulo
+                .trim()
+                .replaceAll("\\s+", " ");
+    }
 }

@@ -31,7 +31,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskResponseDTO criar(@RequestBody TaskCreateRequestDTO dto){
+    public TaskResponseDTO criar(@Valid @RequestBody TaskCreateRequestDTO dto){
         return taskService.criar(dto);
     }
 
