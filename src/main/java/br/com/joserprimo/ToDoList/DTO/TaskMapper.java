@@ -17,7 +17,8 @@ public TaskResponseDTO toResponse(TaskModel taskModel){
             taskModel.getTitulo(),
             taskModel.getDescricao(),
             taskModel.getTaskStatus(),
-            taskModel.getDataCriacao());
+            taskModel.getDataCriacao(),
+            taskModel.getDataConclusao());
 }
 
 public TaskModel toEntity(TaskCreateRequestDTO taskCreateRequestDTO){

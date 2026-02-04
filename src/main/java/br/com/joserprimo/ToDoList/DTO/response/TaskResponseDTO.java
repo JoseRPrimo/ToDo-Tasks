@@ -1,6 +1,7 @@
 package br.com.joserprimo.ToDoList.DTO.response;
 
 import br.com.joserprimo.ToDoList.Model.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class TaskResponseDTO {
     private String descricao;
     private TaskStatus taskStatus;
     private LocalDate data_criacao;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDate dataConclusao;
 
 }

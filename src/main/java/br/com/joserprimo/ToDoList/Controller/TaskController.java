@@ -27,7 +27,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskResponseDTO listarId(@PathVariable Long id){
-        return taskService.findById(id);
+        return taskService.listarId(id);
     }
 
     @PostMapping
@@ -48,6 +48,11 @@ public class TaskController {
     @PutMapping("/{id}")
     public TaskResponseDTO atualizar(@RequestBody TaskUpdateRequestDTO dto, @PathVariable Long id){
         return taskService.atualizar(id, dto);
+    }
+
+    @PatchMapping("/{id}/concluir")
+    public TaskResponseDTO concluir(@PathVariable Long id){
+        return taskService.concluir(id);
     }
 
 }

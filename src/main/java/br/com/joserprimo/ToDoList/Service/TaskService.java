@@ -14,6 +14,7 @@ import br.com.joserprimo.ToDoList.Repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class TaskService {
        return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
-    public TaskResponseDTO findById(Long id){
+    public TaskResponseDTO listarId(Long id){
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() ->  new ResourceNotFoundException("Task não encontrada com id: " + id));
         return mapper.toResponse(task);
@@ -77,7 +78,16 @@ public class TaskService {
         return mapper.toResponse(atualizado);
     }
 
-
+    public TaskResponseDTO concluir(Long id){
+        TaskModel task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: "+id));
+        if(task.getTaskStatus()==TaskStatus.PENDENTE){
+            task.setTaskStatus(TaskStatus.CONCLUIDA);
+            task.setDataConclusao(LocalDate.now());
+            taskRepository.save(task);
+        }
+        return mapper.toResponse(task);
+    }
 
 
 

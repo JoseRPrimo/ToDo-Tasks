@@ -32,4 +32,6 @@ public class TaskModel {
     protected void onCreate() {
         this.dataCriacao = LocalDate.now();
     }
+    @Column(name = "data_conclusao")
+    private LocalDate dataConclusao;
 }
