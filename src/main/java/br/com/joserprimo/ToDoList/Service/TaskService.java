@@ -5,9 +5,11 @@ import br.com.joserprimo.ToDoList.DTO.request.TaskCreateRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.request.TaskPatchRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.request.TaskUpdateRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.response.TaskResponseDTO;
+import br.com.joserprimo.ToDoList.Exception.BusinessRuleException;
 import br.com.joserprimo.ToDoList.Exception.ResourceNotFoundException;
 import br.com.joserprimo.ToDoList.Exception.ValidationException;
 import br.com.joserprimo.ToDoList.Model.TaskModel;
+import br.com.joserprimo.ToDoList.Model.TaskStatus;
 import br.com.joserprimo.ToDoList.Repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,10 @@ public class TaskService {
         String validacaoTitulo = dto.getTitulo().trim().replace(" ","");
         if (validacaoTitulo.length()<3 || validacaoTitulo.length()>100){
             throw new ValidationException("Titulo precisa ter entre 3 e 100 caracteres.");
+        }
+        String titulolimpo=dto.getTitulo().trim();
+        if(taskRepository.existsByTituloIgnoreCaseAndTaskStatus(titulolimpo, TaskStatus.PENDENTE)){
+            throw new BusinessRuleException("Já existe task pendente com esse titulo.");
         }
 
         TaskModel task = taskRepository.save(mapper.toEntity(dto));
