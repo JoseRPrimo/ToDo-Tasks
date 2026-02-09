@@ -8,8 +8,14 @@ import br.com.joserprimo.ToDoList.Model.TaskModel;
 import br.com.joserprimo.ToDoList.Service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 
@@ -21,8 +27,12 @@ public class TaskController {
     TaskService taskService;
 
     @GetMapping
-    public List<TaskResponseDTO> listar(){
-        return taskService.listar();
+    public Page<TaskResponseDTO> listar(@PageableDefault(size=10)
+                                        @SortDefault.SortDefaults({@SortDefault( sort = "taskStatus", direction = Sort.Direction.DESC),
+                                                                    @SortDefault(sort = "dataCriacao", direction = Sort.Direction.ASC),
+                                                                   @SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable)
+    {
+        return taskService.listar(pageable);
     }
 
     @GetMapping("/{id}")
@@ -41,12 +51,12 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public TaskResponseDTO patch(@RequestBody TaskPatchRequestDTO dto, @PathVariable Long id){
+    public TaskResponseDTO patch(@Valid @RequestBody TaskPatchRequestDTO dto, @PathVariable Long id){
         return taskService.alterarParcial(dto, id);
     }
 
     @PutMapping("/{id}")
-    public TaskResponseDTO atualizar(@RequestBody TaskUpdateRequestDTO dto, @PathVariable Long id){
+    public TaskResponseDTO atualizar(@Valid @RequestBody TaskUpdateRequestDTO dto, @PathVariable Long id){
         return taskService.atualizar(id, dto);
     }
 

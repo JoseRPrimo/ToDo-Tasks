@@ -15,5 +15,5 @@ public class TaskUpdateRequestDTO {
     @Size(min = 3, max = 100, message = "Titulo precisa ter entre 3 e 100 caracteres.")
     private String titulo;
     private String descricao;
-    private TaskStatus taskStatus;
+
 }

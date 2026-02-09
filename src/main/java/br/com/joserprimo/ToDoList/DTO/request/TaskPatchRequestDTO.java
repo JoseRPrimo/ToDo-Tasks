@@ -12,5 +12,4 @@ public class TaskPatchRequestDTO {
 
     private String titulo;
     private String descricao;
-    private TaskStatus taskStatus;
 }

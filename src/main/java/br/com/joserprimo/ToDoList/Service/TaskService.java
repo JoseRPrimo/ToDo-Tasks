@@ -7,18 +7,15 @@ import br.com.joserprimo.ToDoList.DTO.request.TaskUpdateRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.response.TaskResponseDTO;
 import br.com.joserprimo.ToDoList.Exception.BusinessRuleException;
 import br.com.joserprimo.ToDoList.Exception.ResourceNotFoundException;
-import br.com.joserprimo.ToDoList.Exception.ValidationException;
 import br.com.joserprimo.ToDoList.Model.TaskModel;
 import br.com.joserprimo.ToDoList.Model.TaskStatus;
 import br.com.joserprimo.ToDoList.Repository.TaskRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -29,8 +26,12 @@ public class TaskService {
     TaskMapper mapper;
 
     @Transactional(readOnly = true)
-    public List<TaskResponseDTO> listar(){
-       return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
+    public Page<TaskResponseDTO> listar(Pageable pageable){
+        return taskRepository.findAll(pageable).map(mapper::toResponse);
+
+
+//        SpringDataWebProperties.Sort sort =
+//       return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +62,7 @@ public class TaskService {
     public TaskResponseDTO alterarParcial(TaskPatchRequestDTO dto, Long id){
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: "+id));
+        task.validarAlteracao();
         mapper.patchEntity(task, dto);
         return mapper.toResponse(task);
     }
@@ -68,18 +70,17 @@ public class TaskService {
     public TaskResponseDTO atualizar(Long id, TaskUpdateRequestDTO dto) {
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: " + id));
+        task.validarAlteracao();
         mapper.updateEntity(task, dto);
         return mapper.toResponse(task);
     }
+
     public TaskResponseDTO concluir(Long id){
         TaskModel task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada com id: "+id));
-        if(task.getTaskStatus()!=TaskStatus.PENDENTE) {
-            throw new BusinessRuleException("Você só pode concluir uma task pendente!");
-        }
-        task.setTaskStatus(TaskStatus.CONCLUIDA);
-        task.setDataConclusao(LocalDate.now());
-        return mapper.toResponse(task);
+
+      task.concluir();
+      return mapper.toResponse(task);
     }
 
 

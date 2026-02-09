@@ -22,30 +22,17 @@ public TaskResponseDTO toResponse(TaskModel taskModel){
 }
 
 public TaskModel toEntity(TaskCreateRequestDTO taskCreateRequestDTO){
-    TaskModel taskModel = new TaskModel();
-    taskModel.setTitulo(taskCreateRequestDTO.getTitulo());
-    taskModel.setDescricao(taskCreateRequestDTO.getDescricao());
+    TaskModel taskModel = new TaskModel(taskCreateRequestDTO.getTitulo(), taskCreateRequestDTO.getDescricao());
     return taskModel;
 }
 
-public void updateEntity(TaskModel taskModel, TaskUpdateRequestDTO taskUpdateRequestDTO){
-    taskModel.setTitulo(taskUpdateRequestDTO.getTitulo());
-    taskModel.setDescricao(taskUpdateRequestDTO.getDescricao());
-    taskModel.setTaskStatus(taskUpdateRequestDTO.getTaskStatus());
+public void updateEntity(TaskModel task, TaskUpdateRequestDTO dto){
+    task.alterarDados(dto.getTitulo(), dto.getDescricao());
 
 }
 
 public void patchEntity(TaskModel task, TaskPatchRequestDTO dto){
-
-    if (dto.getTitulo()!=null){
-        task.setTitulo(dto.getTitulo());
-    }
-    if (dto.getDescricao()!=null){
-        task.setDescricao(dto.getDescricao());
-    }
-    if (dto.getTaskStatus()!=null){
-        task.setTaskStatus(dto.getTaskStatus());
-    }
+    task.alterarDados(dto.getTitulo(), dto.getDescricao());
 }
 
 }
