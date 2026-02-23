@@ -31,7 +31,7 @@ public class TaskCreateRequestDTO {
      * @param titulo Título a ser formatado e armazenado
      */
 
-    @Schema(hidden = true)
+
     public void setTitulo(String titulo) {
         if (titulo == null) {
             this.titulo = null;

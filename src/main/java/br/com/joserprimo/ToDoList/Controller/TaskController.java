@@ -16,6 +16,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
+import br.com.joserprimo.ToDoList.DTO.request.TaskCreateRequestDTO;
 
 @RestController
 @Tag(name = "Tasks", description = "Endpoints para gerenciamento de tarefas")
