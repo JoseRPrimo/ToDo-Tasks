@@ -6,6 +6,8 @@ target/
 *.iws
 *.iml
 *.ipr
+*.mv.db
+*.trace.db
 
 # Eclipse / STS
 .classpath
