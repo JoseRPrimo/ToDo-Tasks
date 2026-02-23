@@ -29,9 +29,6 @@ public class TaskService {
     public Page<TaskResponseDTO> listar(Pageable pageable){
         return taskRepository.findAll(pageable).map(mapper::toResponse);
 
-
-//        SpringDataWebProperties.Sort sort =
-//       return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

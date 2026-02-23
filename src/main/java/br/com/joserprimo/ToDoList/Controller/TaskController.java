@@ -1,35 +1,32 @@
 package br.com.joserprimo.ToDoList.Controller;
-
 import br.com.joserprimo.ToDoList.DTO.request.TaskCreateRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.request.TaskPatchRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.request.TaskUpdateRequestDTO;
 import br.com.joserprimo.ToDoList.DTO.response.TaskResponseDTO;
-import br.com.joserprimo.ToDoList.Model.TaskModel;
 import br.com.joserprimo.ToDoList.Service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
-
-
-import java.util.List;
 
 @RestController
 @Tag(name = "Tasks", description = "Endpoints para gerenciamento de tarefas")
 @RequestMapping("/tasks")
 public class TaskController {
 
-    @Autowired
-    TaskService taskService;
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping
     @Operation(summary = "Lista todas as tasks")
@@ -56,9 +53,10 @@ public class TaskController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Criar task")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task criada com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Task criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro na criação")
     })
     public TaskResponseDTO criar(@Valid @RequestBody TaskCreateRequestDTO dto){
@@ -66,9 +64,10 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Excluir task por ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task excluída com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Task excluída com sucesso"),
             @ApiResponse(responseCode = "404", description = "Task não encontrada")
     })
     public void delete(@PathVariable Long id){
@@ -96,6 +95,7 @@ public class TaskController {
     public TaskResponseDTO atualizar(@Valid @RequestBody TaskUpdateRequestDTO dto, @PathVariable Long id){
         return taskService.atualizar(id, dto);
     }
+
     @Operation(summary = "Concluir task por id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task concluída com sucesso"),
